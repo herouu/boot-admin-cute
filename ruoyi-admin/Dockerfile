@@ -4,3 +4,4 @@ VOLUME /tmp
 ARG JAR_FILE
 COPY ${JAR_FILE} ruoyi-admin.jar
 ENTRYPOINT ["java","-jar","/ruoyi-admin.jar"]
+EXPOSE 8080
