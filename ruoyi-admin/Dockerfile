@@ -1,4 +1,4 @@
-FROM adoptopenjdk:11-jre-hotspot
+FROM adoptopenjdk:8-jre-hotspot
 MAINTAINER herouu 2269648132@qq.com
 RUN mkdir /opt/app
 # 时区
