@@ -1,59 +1,110 @@
 package com.ruoyi.common.utils.ip;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
+
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.html.EscapeUtil;
 
 /**
  * 获取IP方法
- * 
+ *
  * @author ruoyi
  */
-public class IpUtils
-{
-    public static String getIpAddr(HttpServletRequest request)
-    {
-        if (request == null)
-        {
+public class IpUtils {
+    public static String getIpAddr(HttpServletRequest request) {
+        if (request == null) {
             return "unknown";
         }
         String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))
-        {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))
-        {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Forwarded-For");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))
-        {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))
-        {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
-
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))
-        {
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
-        return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : EscapeUtil.clean(ip);
+        if (StringUtils.equals("0:0:0:0:0:0:0:1", ip) || StringUtils.equals("127.0.0.1", ip)) {
+            ip = getLocalIpAddress();
+        }
+        return EscapeUtil.clean(ip);
     }
 
-    public static boolean internalIp(String ip)
-    {
+
+    private static final byte INVALID_MACS[][] = {
+            {0x00, 0x05, 0x69},             // VMWare
+            {0x00, 0x1C, 0x14},             // VMWare
+            {0x00, 0x0C, 0x29},             // VMWare
+            {0x00, 0x50, 0x56},             // VMWare
+            {0x08, 0x00, 0x27},             // Virtualbox
+            {0x0A, 0x00, 0x27},             // Virtualbox
+            {0x00, 0x03, (byte) 0xFF},      // Virtual-PC
+            {0x00, 0x15, 0x5D}              // Hyper-V
+    };
+
+    private static boolean isVMMac(byte[] mac) {
+        if (null == mac) {
+            return false;
+        }
+
+        for (byte[] invalid : INVALID_MACS) {
+            if (invalid[0] == mac[0] && invalid[1] == mac[1] && invalid[2] == mac[2]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    public static String getLocalIpAddress() {
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface ni = networkInterfaces.nextElement();
+
+                if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) {
+                    continue;
+                }
+
+                if (isVMMac(ni.getHardwareAddress())) {
+                    continue;
+                }
+
+                Enumeration<InetAddress> inetAddresses = ni.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    if (inetAddress.isLinkLocalAddress()) {
+                        continue;
+                    }
+                    return inetAddress.getHostAddress();
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return org.apache.commons.lang3.StringUtils.EMPTY;
+    }
+
+    public static boolean internalIp(String ip) {
         byte[] addr = textToNumericFormatV4(ip);
         return internalIp(addr) || "127.0.0.1".equals(ip);
     }
 
-    private static boolean internalIp(byte[] addr)
-    {
-        if (StringUtils.isNull(addr) || addr.length < 2)
-        {
+    private static boolean internalIp(byte[] addr) {
+        if (StringUtils.isNull(addr) || addr.length < 2) {
             return true;
         }
         final byte b0 = addr[0];
@@ -67,18 +118,15 @@ public class IpUtils
         // 192.168.x.x/16
         final byte SECTION_5 = (byte) 0xC0;
         final byte SECTION_6 = (byte) 0xA8;
-        switch (b0)
-        {
+        switch (b0) {
             case SECTION_1:
                 return true;
             case SECTION_2:
-                if (b1 >= SECTION_3 && b1 <= SECTION_4)
-                {
+                if (b1 >= SECTION_3 && b1 <= SECTION_4) {
                     return true;
                 }
             case SECTION_5:
-                switch (b1)
-                {
+                switch (b1) {
                     case SECTION_6:
                         return true;
                 }
@@ -89,25 +137,21 @@ public class IpUtils
 
     /**
      * 将IPv4地址转换成字节
-     * 
+     *
      * @param text IPv4地址
      * @return byte 字节
      */
-    public static byte[] textToNumericFormatV4(String text)
-    {
-        if (text.length() == 0)
-        {
+    public static byte[] textToNumericFormatV4(String text) {
+        if (text.length() == 0) {
             return null;
         }
 
         byte[] bytes = new byte[4];
         String[] elements = text.split("\\.", -1);
-        try
-        {
+        try {
             long l;
             int i;
-            switch (elements.length)
-            {
+            switch (elements.length) {
                 case 1:
                     l = Long.parseLong(elements[0]);
                     if ((l < 0L) || (l > 4294967295L)) {
@@ -133,8 +177,7 @@ public class IpUtils
                     bytes[3] = (byte) (int) (l & 0xFF);
                     break;
                 case 3:
-                    for (i = 0; i < 2; ++i)
-                    {
+                    for (i = 0; i < 2; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L)) {
                             return null;
@@ -149,8 +192,7 @@ public class IpUtils
                     bytes[3] = (byte) (int) (l & 0xFF);
                     break;
                 case 4:
-                    for (i = 0; i < 4; ++i)
-                    {
+                    for (i = 0; i < 4; ++i) {
                         l = Integer.parseInt(elements[i]);
                         if ((l < 0L) || (l > 255L)) {
                             return null;
@@ -161,34 +203,24 @@ public class IpUtils
                 default:
                     return null;
             }
-        }
-        catch (NumberFormatException e)
-        {
+        } catch (NumberFormatException e) {
             return null;
         }
         return bytes;
     }
 
-    public static String getHostIp()
-    {
-        try
-        {
+    public static String getHostIp() {
+        try {
             return InetAddress.getLocalHost().getHostAddress();
-        }
-        catch (UnknownHostException e)
-        {
+        } catch (UnknownHostException e) {
         }
         return "127.0.0.1";
     }
 
-    public static String getHostName()
-    {
-        try
-        {
+    public static String getHostName() {
+        try {
             return InetAddress.getLocalHost().getHostName();
-        }
-        catch (UnknownHostException e)
-        {
+        } catch (UnknownHostException e) {
         }
         return "未知";
     }
