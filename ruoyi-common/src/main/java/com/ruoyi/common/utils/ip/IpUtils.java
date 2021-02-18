@@ -1,14 +1,14 @@
 package com.ruoyi.common.utils.ip;
 
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.html.EscapeUtil;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import javax.servlet.http.HttpServletRequest;
-
-import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.html.EscapeUtil;
 
 /**
  * 获取IP方法
@@ -16,6 +16,17 @@ import com.ruoyi.common.utils.html.EscapeUtil;
  * @author ruoyi
  */
 public class IpUtils {
+    private static final byte INVALID_MACS[][] = {
+            {0x00, 0x05, 0x69},             // VMWare
+            {0x00, 0x1C, 0x14},             // VMWare
+            {0x00, 0x0C, 0x29},             // VMWare
+            {0x00, 0x50, 0x56},             // VMWare
+            {0x08, 0x00, 0x27},             // Virtualbox
+            {0x0A, 0x00, 0x27},             // Virtualbox
+            {0x00, 0x03, (byte) 0xFF},      // Virtual-PC
+            {0x00, 0x15, 0x5D}              // Hyper-V
+    };
+
     public static String getIpAddr(HttpServletRequest request) {
         if (request == null) {
             return "unknown";
@@ -41,18 +52,6 @@ public class IpUtils {
         }
         return EscapeUtil.clean(ip);
     }
-
-
-    private static final byte INVALID_MACS[][] = {
-            {0x00, 0x05, 0x69},             // VMWare
-            {0x00, 0x1C, 0x14},             // VMWare
-            {0x00, 0x0C, 0x29},             // VMWare
-            {0x00, 0x50, 0x56},             // VMWare
-            {0x08, 0x00, 0x27},             // Virtualbox
-            {0x0A, 0x00, 0x27},             // Virtualbox
-            {0x00, 0x03, (byte) 0xFF},      // Virtual-PC
-            {0x00, 0x15, 0x5D}              // Hyper-V
-    };
 
     private static boolean isVMMac(byte[] mac) {
         if (null == mac) {

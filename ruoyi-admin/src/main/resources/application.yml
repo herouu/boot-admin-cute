@@ -9,7 +9,7 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径,使用jvm系统变量,兼容windows和linux;
-#  profile: ${user.dir}/uploadPath
+  #  profile: ${user.dir}/uploadPath
   profile: /home/herouu/uploadPath
 
   # 获取ip地址开关
@@ -62,11 +62,11 @@ spring:
     active: @profiles.active@
   # 文件上传
   servlet:
-     multipart:
-       # 单个文件大小
-       max-file-size:  10MB
-       # 设置总上传的文件大小
-       max-request-size:  20MB
+    multipart:
+      # 单个文件大小
+      max-file-size:  10MB
+      # 设置总上传的文件大小
+      max-request-size:  20MB
   # 服务模块
   devtools:
     restart:
@@ -75,12 +75,12 @@ spring:
 
 # token配置
 token:
-    # 令牌自定义标识
-    header: Authorization
-    # 令牌密钥
-    secret: abcdefghijklmnopqrstuvwxyz
-    # 令牌有效期（默认30分钟）
-    expireTime: 30
+  # 令牌自定义标识
+  header: Authorization
+  # 令牌密钥
+  secret: abcdefghijklmnopqrstuvwxyz
+  # 令牌有效期（默认30分钟）
+  expireTime: 30
 
 # MyBatis配置
 # https://baomidou.com/config/
