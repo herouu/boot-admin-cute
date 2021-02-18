@@ -1,6 +1,7 @@
-FROM openjdk:8-jdk-alpine
+FROM adoptopenjdk:8-jre-hotspot
 MAINTAINER herouu 2269648132@qq.com
-VOLUME /tmp
+RUN mkdir /opt/app
 ARG JAR_FILE
-COPY ${JAR_FILE} ruoyi-admin.jar
-ENTRYPOINT ["java","-jar","/ruoyi-admin.jar"]
+COPY ${JAR_FILE} /opt/app/ruoyi-admin.jar
+ENTRYPOINT ["java","-jar","/opt/app/ruoyi-admin.jar"]
+EXPOSE 8080
