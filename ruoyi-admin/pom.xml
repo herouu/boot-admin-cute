@@ -117,6 +117,7 @@
 <!--                    </buildArgs>-->
 <!--                </configuration>-->
 <!--            </plugin>-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
