@@ -1,5 +1,5 @@
 FROM adoptopenjdk:8-jre-hotspot
-MAINTAINER herouu 2269648132@qq.com
+MAINTAINER herouu herouucn@foxmail.com
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 RUN mkdir /opt/app
 ARG JAR_FILE
