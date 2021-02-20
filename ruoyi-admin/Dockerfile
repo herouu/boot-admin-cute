@@ -1,4 +1,4 @@
-FROM registry.cn-beijing.aliyuncs.com/hub-mirrors/openjdk:8-jdk-alpine
+FROM oracle-jdk:8
 MAINTAINER herouu herouucn@foxmail.com
 #RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' >/etc/timezone
 RUN mkdir /opt/app
