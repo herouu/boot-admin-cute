@@ -16,7 +16,7 @@ public class RuoYiApplication {
     public static void main(String[] args) {
         System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(RuoYiApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  若依启动成功   ლ(´ڡ`ლ)ﾞ");
-        log.info("herouu ruoyi 启动成功 ……——……");
+        log.info("(♥◠‿◠)ﾉﾞ  若依启动成功   ლ(´ڡ`ლ)ﾞ");
+        log.info("愉快使用吧！");
     }
 }
