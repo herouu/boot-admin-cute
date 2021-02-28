@@ -74,7 +74,7 @@ public class Constants {
     /**
      * 令牌
      */
-    public static final String TOKEN = "token";
+    public static final String TOKEN = "Authorization";
 
     /**
      * 令牌前缀

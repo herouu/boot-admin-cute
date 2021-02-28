@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.system;
 
+import cn.hutool.json.JSONObject;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysMenu;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -47,12 +49,12 @@ public class SysLoginController {
      */
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody) {
-        AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
-        return ajax;
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put(Constants.TOKEN, token);
+        return AjaxResult.success(map);
     }
 
     /**
