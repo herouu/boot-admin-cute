@@ -62,7 +62,7 @@ public class SysLoginController {
      *
      * @return 用户信息
      */
-    @GetMapping("getInfo")
+    @GetMapping("userInfo")
     public AjaxResult getInfo() {
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         SysUser user = loginUser.getUser();
@@ -70,11 +70,11 @@ public class SysLoginController {
         Set<String> roles = permissionService.getRolePermission(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
-        AjaxResult ajax = AjaxResult.success();
-        ajax.put("user", user);
-        ajax.put("roles", roles);
-        ajax.put("permissions", permissions);
-        return ajax;
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("user", user);
+        map.put("roles", roles);
+        map.put("permissions", permissions);
+        return AjaxResult.success(map);
     }
 
     /**
