@@ -54,7 +54,7 @@ public class UserConstants {
     public final static String LAYOUT = "Layout";
 
     /** ParentView组件标识 */
-    public final static String PARENT_VIEW = "ParentView";
+    public final static String PARENT_VIEW = "EmptyLayout";
 
     /** 校验返回结果码 */
     public final static String UNIQUE = "0";
