@@ -6,7 +6,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:mysql://101.200.79.90:3306/boot-admin-cute?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&autoReconnect=true
+        url: jdbc:mysql://herouu.top:3306/boot-admin-cute?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&autoReconnect=true
         username: root
         password: adelina
       # 从库数据源
@@ -58,7 +58,7 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 101.200.79.90
+    host: herouu.top
     # 端口，默认为6379
     port: 6379
     # 数据库索引
